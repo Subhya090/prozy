@@ -1,16 +1,35 @@
-# Use Ubuntu as the base image
+# Use official OpenVPN image
 FROM ubuntu:latest
 
-# Install SSH Server
-RUN apt update && apt install -y openssh-server
+# Install OpenVPN
+RUN apt update && apt install -y openvpn easy-rsa
 
-# Create SSH directory and allow root login
-RUN mkdir /var/run/sshd && \
-    echo "root:sam" | chpasswd && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+# Create OpenVPN directory
+RUN mkdir -p /etc/openvpn
 
-# Expose SSH (22) + 5 Random Ports
-EXPOSE 22 3000 4000 5000 6000 7000
+# Generate OpenVPN server configuration
+RUN echo " \
+port 5850\n\
+proto tcp\n\
+dev tun\n\
+ca /etc/openvpn/ca.crt\n\
+cert /etc/openvpn/server.crt\n\
+key /etc/openvpn/server.key\n\
+dh /etc/openvpn/dh.pem\n\
+server 10.8.0.0 255.255.255.0\n\
+push \"redirect-gateway def1\"\n\
+push \"dhcp-option DNS 1.1.1.1\"\n\
+keepalive 10 120\n\
+tls-server\n\
+cipher AES-256-CBC\n\
+persist-key\n\
+persist-tun\n\
+status /var/log/openvpn-status.log\n\
+verb 3\n\
+" > /etc/openvpn/server.conf
 
-# Start SSH service in foreground
-CMD ["/usr/sbin/sshd", "-D"]
+# Expose OpenVPN TCP Port
+EXPOSE 5850
+
+# Start OpenVPN Server
+CMD ["openvpn", "--config", "/etc/openvpn/server.conf"]
