@@ -1,9 +1,11 @@
 # Use Ubuntu as the base image
 FROM ubuntu:latest
 
+
 # Install OpenVPN and Easy-RSA for generating keys
 RUN apt update && apt install -y openvpn easy-rsa iproute2
 
+RUN mkdir -p /dev/net && mknod /dev/net/tun c 10 200 && chmod 600 /dev/net/tun
 # Create OpenVPN directory
 RUN mkdir -p /etc/openvpn/easy-rsa
 
@@ -48,4 +50,4 @@ verb 3\n\
 EXPOSE 5859/tcp
 
 # Start OpenVPN
-CMD ["openvpn", "--config", "/etc/openvpn/server.conf"]
+CMD ["openvpn", "--config", "/etc/openvpn/server.conf", "--dev", "tun"]
