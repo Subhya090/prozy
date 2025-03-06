@@ -27,5 +27,8 @@ verb 3
 EOF
 fi
 
-# Start OpenVPN server
-openvpn --config /etc/openvpn/server.conf
+# Start OpenVPN server in the background
+openvpn --config /etc/openvpn/server.conf &
+
+# Keep the container alive indefinitely
+tail -f /dev/null
