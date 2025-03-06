@@ -5,7 +5,6 @@ FROM ubuntu:latest
 RUN apt update && apt install -y openvpn easy-rsa iproute2
 
 # Enable IP forwarding
-RUN echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf && sysctl -p
 
 # Create OpenVPN directory
 RUN mkdir -p /etc/openvpn
@@ -35,4 +34,4 @@ verb 3\n\
 EXPOSE 5859/tcp
 
 # Run OpenVPN in the foreground
-CMD ["openvpn", "--config", "/etc/openvpn/server.conf"]
+CMD ["openvpn", "--config", "/etc/openvpn/server.conf", "--verb", "3", "--log", "/dev/stdout"]
