@@ -7,7 +7,7 @@ sysctl -p
 # Generate OpenVPN server config if not exists
 if [ ! -f /etc/openvpn/server.conf ]; then
     cat <<EOF > /etc/openvpn/server.conf
-port 443
+port 5859
 proto tcp
 dev tun
 ca /etc/openvpn/ca.crt
