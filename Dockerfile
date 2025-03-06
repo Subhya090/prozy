@@ -11,6 +11,6 @@ COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
 # Expose OpenVPN over TCP
-EXPOSE 443/tcp
+EXPOSE 5859/tcp
 
 CMD ["/start.sh"]
